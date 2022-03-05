@@ -928,18 +928,14 @@ impl<'probe> CoreInterface for Armv8a<'probe> {
         }
     }
 
-    fn write_core_reg(&mut self, address: RegisterId, value: RegisterValue) -> Result<()> {
+    fn write_core_reg(&mut self, address: RegisterId, value: RegisterValue) -> Result<(), Error> {
         let reg_num = address.0;
         let current_mode = if self.state.is_64_bit { 64 } else { 32 };
 
         if (reg_num as usize) >= self.state.register_cache.len() {
-            return Err(
-                Error::architecture_specific(Armv8aError::InvalidRegisterNumber(
-                    reg_num,
-                    current_mode,
-                ))
-                .into(),
-            );
+            return Err(Error::architecture_specific(
+                Armv8aError::InvalidRegisterNumber(reg_num, current_mode),
+            ));
         }
         self.state.register_cache[reg_num as usize] = Some((value, true));
 
@@ -1282,9 +1278,8 @@ mod test {
 
             let expected_op = self.expected_ops.remove(0);
 
-            assert_eq!(
+            assert!(
                 expected_op.read,
-                true,
                 "R/W mismatch for register: Expected {:#} Actual: {:#}",
                 address_to_reg_num(expected_op.address),
                 address_to_reg_num(address)
@@ -1318,7 +1313,7 @@ mod test {
 
             let expected_op = self.expected_ops.remove(0);
 
-            assert_eq!(expected_op.read, false);
+            assert!(!expected_op.read);
             assert_eq!(
                 expected_op.address,
                 address,
@@ -1637,7 +1632,7 @@ mod test {
         )
         .unwrap();
 
-        assert_eq!(core.state.is_64_bit, false);
+        assert!(!core.state.is_64_bit);
     }
 
     #[test]
@@ -1673,8 +1668,8 @@ mod test {
         .unwrap();
 
         // First read false, second read true
-        assert_eq!(false, armv8a.core_halted().unwrap());
-        assert_eq!(true, armv8a.core_halted().unwrap());
+        assert!(!armv8a.core_halted().unwrap());
+        assert!(armv8a.core_halted().unwrap());
     }
 
     #[test]

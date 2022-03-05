@@ -1769,7 +1769,7 @@ mod test {
         let mut mock = MockJaylink::new();
 
         let result = mock.select_protocol(crate::WireProtocol::Jtag);
-        assert_eq!(false, result.is_err());
+        assert!(result.is_ok());
 
         // Read request
         mock.add_jtag_response(PortType::AccessPort, 4, true, DapAcknowledge::Ok, 0, 0);
@@ -1824,7 +1824,7 @@ mod test {
         let mut mock = MockJaylink::new();
 
         let result = mock.select_protocol(crate::WireProtocol::Jtag);
-        assert_eq!(false, result.is_err());
+        assert!(result.is_ok());
 
         // Read
         mock.add_jtag_response(PortType::AccessPort, 4, true, DapAcknowledge::Ok, 0, 0);
@@ -1875,7 +1875,7 @@ mod test {
         let mut mock = MockJaylink::new();
 
         let result = mock.select_protocol(crate::WireProtocol::Jtag);
-        assert_eq!(false, result.is_err());
+        assert!(result.is_ok());
 
         mock.add_jtag_response(
             PortType::AccessPort,
@@ -1932,7 +1932,7 @@ mod test {
         let mut mock = MockJaylink::new();
 
         let result = mock.select_protocol(crate::WireProtocol::Jtag);
-        assert_eq!(false, result.is_err());
+        assert!(result.is_ok());
 
         mock.add_jtag_response(
             PortType::AccessPort,
